@@ -10,33 +10,16 @@ import (
 )
 
 func main() {
-	venues := []models.Venue{
-		{Name: "Coinbase"},
-		{Name: "Binance"},
-		{Name: "Kraken"},
-		{Name: "Gemini"},
-		{Name: "Bybit"},
-		{Name: "OKX"},
-		{Name: "KuCoin"},
-		{Name: "Bitfinex"},
-		{Name: "Huobi"},
-		{Name: "Gate.io"},
-		{Name: "Bitstamp"},
-		{Name: "Crypto.com"},
-		{Name: "MEXC"},
-		{Name: "Bitget"},
-		{Name: "Deribit"},
-		{Name: "CME Group"},
-		{Name: "LMAX Digital"},
-		{Name: "Bullish"},
-		{Name: "Bakkt"},
-		{Name: "Uniswap"},
+	exchanges := []models.Exchange{
+		&models.Coinbase{},
+		&models.Binance{},
+		&models.Kraken{},
 	}
 
 	const maxConcurrentWorkers = 4
 
-	workQueue := make(chan models.Venue, len(venues))
-	quoteStream := make(chan models.Quote, len(venues))
+	workQueue := make(chan models.Exchange, len(exchanges))
+	quoteStream := make(chan models.Quote, len(exchanges))
 
 	var wg sync.WaitGroup
 
@@ -44,10 +27,10 @@ func main() {
 		wg.Add(1)
 		go func(workerId int) {
 			defer wg.Done()
-			for venue := range workQueue {
+			for exchange := range workQueue {
 				fetchInnerWg := &sync.WaitGroup{}
 				fetchInnerWg.Add(1)
-				engine.FetchQuote(workerId, venue, quoteStream, fetchInnerWg)
+				engine.FetchQuote(workerId, exchange, quoteStream, fetchInnerWg)
 				fetchInnerWg.Wait()
 			}
 		}(i)
@@ -55,8 +38,8 @@ func main() {
 
 	systemStart := time.Now()
 
-	for _, venue := range venues {
-		workQueue <- venue
+	for _, exchange := range exchanges {
+		workQueue <- exchange
 	}
 
 	close(workQueue)
@@ -88,7 +71,7 @@ func main() {
 	if validQuotes > 0 {
 		fmt.Printf("Best Venue:      %s\n", bestQuote.Venue.Name)
 		fmt.Printf("Best Price: 	 $%.2f\n", bestQuote.Price)
-		fmt.Printf("Routes Scanned:  %d/%d\n", validQuotes, len(venues))
+		fmt.Printf("Routes Scanned:  %d/%d\n", validQuotes, len(exchanges))
 		fmt.Printf("System Latency:  %v\n", systemLatency)
 	} else {
 		fmt.Println("No valid quotes found.")

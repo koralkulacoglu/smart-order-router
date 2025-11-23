@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"math/rand"
 	"sync"
 	"time"
@@ -17,23 +16,17 @@ func getPrice() float64 {
 	return price
 }
 
-func FetchQuote(id int, venue models.Venue, results chan<- models.Quote, wg *sync.WaitGroup) {
+func FetchQuote(id int, exchange models.Exchange, results chan<- models.Quote, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	start := time.Now()
 
-	var price float64
-	var err error
-
-	// Simulate 10% chance of network failure
-	if rand.Float32() > 0.1 {
-		price = getPrice()
-	} else {
-		err = fmt.Errorf("connection failed")
-	}
+	price, err := exchange.FetchPrice()
 
 	results <- models.Quote{
-		Venue:     venue,
+		Venue: models.Venue{
+			Name: exchange.GetName(),
+		},
 		Symbol:    "BTC-USD",
 		Price:     price,
 		Latency:   time.Since(start),
