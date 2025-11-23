@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.2.0...v1.3.0) (2025-11-23)
+
+
+### Features
+
+* implement real exchange API calls ([14e28d5](https://github.com/koralkulacoglu/smart-order-router/commit/14e28d57705cb58b58ae45ff41315201c1a93bf8))
+
 ## [1.2.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.1.0...v1.2.0) (2025-11-23)
 
 
