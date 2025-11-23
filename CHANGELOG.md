@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.0.0...v1.1.0) (2025-11-23)
+
+
+### Features
+
+* move main.go ([cac09d3](https://github.com/koralkulacoglu/smart-order-router/commit/cac09d30125a5f27ff027889c517f92da76debe7))
+
 ## 1.0.0 (2025-11-23)
 
 
