@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.1.0...v1.2.0) (2025-11-23)
+
+
+### Features
+
+* implement concurrent order router ([953f2e6](https://github.com/koralkulacoglu/smart-order-router/commit/953f2e6ece773904cd9d8896d5c8c282b2ab767d))
+
 ## [1.1.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.0.0...v1.1.0) (2025-11-23)
 
 
