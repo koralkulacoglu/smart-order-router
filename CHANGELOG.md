@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.3.0...v1.4.0) (2025-11-25)
+
+
+### Features
+
+* decouple symbols from exchanges ([feaf363](https://github.com/koralkulacoglu/smart-order-router/commit/feaf363cc9fac118ecd7f31f1bcf95e68bb354a1))
+
 ## [1.3.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.2.0...v1.3.0) (2025-11-23)
 
 
