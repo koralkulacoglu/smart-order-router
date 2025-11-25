@@ -9,17 +9,22 @@ import (
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
 )
 
+type Job struct {
+	Exchange models.Exchange
+	Symbol   string
+}
+
 func main() {
-	exchanges := []models.Exchange{
-		&models.Coinbase{},
-		&models.Binance{},
-		&models.Kraken{},
+	jobs := []Job{
+		{&models.Coinbase{}, "BTC-USD"},
+		{&models.Binance{}, "BTCUSDT"},
+		{&models.Kraken{}, "XBTUSD"},
 	}
 
 	const maxConcurrentWorkers = 4
 
-	workQueue := make(chan models.Exchange, len(exchanges))
-	quoteStream := make(chan models.Quote, len(exchanges))
+	workQueue := make(chan Job, len(jobs))
+	quoteStream := make(chan models.Quote, len(jobs))
 
 	var wg sync.WaitGroup
 
@@ -27,10 +32,10 @@ func main() {
 		wg.Add(1)
 		go func(workerId int) {
 			defer wg.Done()
-			for exchange := range workQueue {
+			for job := range workQueue {
 				fetchInnerWg := &sync.WaitGroup{}
 				fetchInnerWg.Add(1)
-				engine.FetchQuote(workerId, exchange, quoteStream, fetchInnerWg)
+				engine.FetchQuote(workerId, job.Exchange, job.Symbol, quoteStream, fetchInnerWg)
 				fetchInnerWg.Wait()
 			}
 		}(i)
@@ -38,8 +43,8 @@ func main() {
 
 	systemStart := time.Now()
 
-	for _, exchange := range exchanges {
-		workQueue <- exchange
+	for _, job := range jobs {
+		workQueue <- job
 	}
 
 	close(workQueue)
@@ -49,15 +54,22 @@ func main() {
 		close(quoteStream)
 	}()
 
+	fmt.Println()
+	fmt.Println("------------------------------------------------------------------------")
+	fmt.Printf("%-12s | %-10s | %-15s | %-12s\n", "EXCHANGE", "SYMBOL", "PRICE", "LATENCY")
+	fmt.Println("------------------------------------------------------------------------")
+
 	validQuotes := 0
 	var bestQuote models.Quote
 	for quote := range quoteStream {
 		if quote.Error != nil {
-			fmt.Printf("[%-12s] Failed: %v\n", quote.Exchange, quote.Error)
+			fmt.Printf("%-12s | %-10s | %-15s | %-12s\n",
+				quote.Exchange, quote.Symbol, "FAILED", quote.Latency)
 			continue
 		}
 
-		fmt.Printf("[%-12s] Price: $%.2f | Latency: %v\n", quote.Exchange, quote.Price, quote.Latency)
+		fmt.Printf("%-12s | %-10s | $%-14.2f | %-12s\n",
+			quote.Exchange, quote.Symbol, quote.Price, quote.Latency)
 
 		if validQuotes == 0 || quote.Price < bestQuote.Price {
 			bestQuote = quote
@@ -67,12 +79,13 @@ func main() {
 
 	systemLatency := time.Since(systemStart)
 
+	fmt.Println("------------------------------------------------------------------------")
 	fmt.Println()
+
 	if validQuotes > 0 {
-		fmt.Printf("Best Exchange:   %s\n", bestQuote.Exchange)
-		fmt.Printf("Best Price: 	 $%.2f\n", bestQuote.Price)
-		fmt.Printf("Routes Scanned:  %d/%d\n", validQuotes, len(exchanges))
-		fmt.Printf("System Latency:  %v\n", systemLatency)
+		fmt.Printf("BEST OFFER:   	%s on %s\n", bestQuote.Symbol, bestQuote.Exchange)
+		fmt.Printf("PRICE:          $%.2f\n", bestQuote.Price)
+		fmt.Printf("SYSTEM LATENCY: %v\n", systemLatency)
 	} else {
 		fmt.Println("No valid quotes found.")
 	}

@@ -10,7 +10,7 @@ import (
 
 type Exchange interface {
 	GetName() string
-	FetchPrice() (float64, error)
+	FetchPrice(symbol string) (float64, error)
 }
 
 type Quote struct {
@@ -34,8 +34,10 @@ var httpClient = &http.Client{
 	Timeout: 1 * time.Second,
 }
 
-func (c *Coinbase) FetchPrice() (float64, error) {
-	res, err := httpClient.Get("https://api.coinbase.com/v2/prices/BTC-USD/spot")
+func (c *Coinbase) FetchPrice(symbol string) (float64, error) {
+	url := fmt.Sprintf("https://api.coinbase.com/v2/prices/%s/spot", symbol)
+
+	res, err := httpClient.Get(url)
 	if err != nil {
 		return 0, err
 	}
@@ -59,8 +61,10 @@ func (c *Coinbase) FetchPrice() (float64, error) {
 	return strconv.ParseFloat(data.Data.Amount, 64)
 }
 
-func (b *Binance) FetchPrice() (float64, error) {
-	res, err := httpClient.Get("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
+func (b *Binance) FetchPrice(symbol string) (float64, error) {
+	url := fmt.Sprintf("https://api.binance.com/api/v3/ticker/price?symbol=%s", symbol)
+
+	res, err := httpClient.Get(url)
 	if err != nil {
 		return 0, err
 	}
@@ -81,8 +85,10 @@ func (b *Binance) FetchPrice() (float64, error) {
 	return strconv.ParseFloat(data.Price, 64)
 }
 
-func (k *Kraken) FetchPrice() (float64, error) {
-	res, err := httpClient.Get("https://api.kraken.com/0/public/Ticker?pair=XBTUSD")
+func (k *Kraken) FetchPrice(symbol string) (float64, error) {
+	url := fmt.Sprintf("https://api.kraken.com/0/public/Ticker?pair=%s", symbol)
+
+	res, err := httpClient.Get(url)
 	if err != nil {
 		return 0, err
 	}
