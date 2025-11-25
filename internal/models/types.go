@@ -13,13 +13,8 @@ type Exchange interface {
 	FetchPrice() (float64, error)
 }
 
-type Venue struct {
-	Name string
-	URL  string
-}
-
 type Quote struct {
-	Venue     Venue
+	Exchange  string
 	Symbol    string
 	Price     float64
 	Latency   time.Duration

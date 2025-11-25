@@ -15,9 +15,7 @@ func FetchQuote(id int, exchange models.Exchange, results chan<- models.Quote, w
 	price, err := exchange.FetchPrice()
 
 	results <- models.Quote{
-		Venue: models.Venue{
-			Name: exchange.GetName(),
-		},
+		Exchange:  exchange.GetName(),
 		Symbol:    "BTC-USD",
 		Price:     price,
 		Latency:   time.Since(start),

@@ -53,11 +53,11 @@ func main() {
 	var bestQuote models.Quote
 	for quote := range quoteStream {
 		if quote.Error != nil {
-			fmt.Printf("[%-12s] Failed: %v\n", quote.Venue.Name, quote.Error)
+			fmt.Printf("[%-12s] Failed: %v\n", quote.Exchange, quote.Error)
 			continue
 		}
 
-		fmt.Printf("[%-12s] Price: $%.2f | Latency: %v\n", quote.Venue.Name, quote.Price, quote.Latency)
+		fmt.Printf("[%-12s] Price: $%.2f | Latency: %v\n", quote.Exchange, quote.Price, quote.Latency)
 
 		if validQuotes == 0 || quote.Price < bestQuote.Price {
 			bestQuote = quote
@@ -69,7 +69,7 @@ func main() {
 
 	fmt.Println()
 	if validQuotes > 0 {
-		fmt.Printf("Best Venue:      %s\n", bestQuote.Venue.Name)
+		fmt.Printf("Best Exchange:   %s\n", bestQuote.Exchange)
 		fmt.Printf("Best Price: 	 $%.2f\n", bestQuote.Price)
 		fmt.Printf("Routes Scanned:  %d/%d\n", validQuotes, len(exchanges))
 		fmt.Printf("System Latency:  %v\n", systemLatency)
