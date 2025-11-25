@@ -60,21 +60,21 @@ func (c *Coinbase) FetchPrice() (float64, error) {
 }
 
 func (b *Binance) FetchPrice() (float64, error) {
-	resp, err := httpClient.Get("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
+	res, err := httpClient.Get("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
 	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close()
+	defer res.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("API status: %s", resp.Status)
+	if res.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf("API status: %s", res.Status)
 	}
 
 	var data struct {
 		Price string `json:"price"`
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&data); err != nil {
 		return 0, err
 	}
 
@@ -82,14 +82,14 @@ func (b *Binance) FetchPrice() (float64, error) {
 }
 
 func (k *Kraken) FetchPrice() (float64, error) {
-	resp, err := httpClient.Get("https://api.kraken.com/0/public/Ticker?pair=XBTUSD")
+	res, err := httpClient.Get("https://api.kraken.com/0/public/Ticker?pair=XBTUSD")
 	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close()
+	defer res.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("API status: %s", resp.Status)
+	if res.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf("API status: %s", res.Status)
 	}
 
 	var data struct {
@@ -98,7 +98,7 @@ func (k *Kraken) FetchPrice() (float64, error) {
 		} `json:"result"`
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&data); err != nil {
 		return 0, err
 	}
 
