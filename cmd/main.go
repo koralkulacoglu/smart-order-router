@@ -16,6 +16,8 @@ type Job struct {
 }
 
 func main() {
+	portfolio := models.NewPortfolio(1_000_000, 0.0001) // 0.01% fees
+
 	gob := models.NewGlobalOrderBook()
 
 	jobs := []Job{
@@ -27,7 +29,7 @@ func main() {
 	var wg sync.WaitGroup
 	stopMatcher := make(chan bool)
 
-	go engine.RunMatcher(gob, stopMatcher)
+	go engine.RunMatcher(gob, portfolio, stopMatcher)
 
 	fmt.Println("--- Starting Fetchers ---")
 	for i, job := range jobs {

@@ -9,8 +9,9 @@ import (
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
 )
 
-func RunMatcher(gob *models.GlobalOrderBook, stopChan <-chan bool) {
+func RunMatcher(gob *models.GlobalOrderBook, portfolio *models.Portfolio, stopChan <-chan bool) {
 	fmt.Println("--- Matcher Engine Started ---")
+	fmt.Println(portfolio.GetStatus())
 
 	ticker := time.NewTicker(10 * time.Millisecond)
 	defer ticker.Stop()
@@ -19,6 +20,7 @@ func RunMatcher(gob *models.GlobalOrderBook, stopChan <-chan bool) {
 		select {
 		case <-stopChan:
 			fmt.Println("--- Matcher Engine Stopped ---")
+			fmt.Println("Final " + portfolio.GetStatus())
 			return
 		case <-ticker.C:
 			gob.Lock()
@@ -49,13 +51,15 @@ func RunMatcher(gob *models.GlobalOrderBook, stopChan <-chan bool) {
 				askOrder := heap.Pop(gob.Asks).(models.OrderBookEntry)
 
 				quantity := math.Min(bidOrder.Quantity, askOrder.Quantity)
-				profit := (bidOrder.Price - askOrder.Price) * quantity
+				profit, executed := portfolio.ExecuteTrade(askOrder.Price, bidOrder.Price, quantity)
 
-				fmt.Printf(">>> EXECUTE: Buy %.4f on %s @ %.2f -> Sell on %s @ %.2f | Profit: $%.4f\n",
-					quantity, askOrder.Exchange, askOrder.Price, bidOrder.Exchange, bidOrder.Price, profit)
+				if executed {
+					fmt.Printf(">>> 🚀 EXECUTE: Buy %.4f on %s @ %.2f -> Sell on %s @ %.2f | Profit: $%.4f\n",
+						quantity, askOrder.Exchange, askOrder.Price, bidOrder.Exchange, bidOrder.Price, profit)
 
-				bidOrder.Quantity -= quantity
-				askOrder.Quantity -= quantity
+					bidOrder.Quantity -= quantity
+					askOrder.Quantity -= quantity
+				}
 
 				if bidOrder.Quantity > 0.0000001 {
 					heap.Push(gob.Bids, bidOrder)
