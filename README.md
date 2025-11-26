@@ -2,7 +2,7 @@
 
 A concurrent Smart Order Router (SOR) written in Go.
 
-<video src="media/demo.mp4" autoplay muted loop></video>
+![Demo](media/demo.gif)
 
 This application simulates an **arbitrage trading engine** that aggregates live order book data from multiple exchanges (Binance, Coinbase, Kraken) in parallel into a centralized "Global Order Book" to identify and execute profitable spread opportunities in real-time.
 
