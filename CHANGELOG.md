@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.4.0...v1.5.0) (2025-11-26)
+
+
+### Features
+
+* implement arbitrage and refactor models ([6b078fa](https://github.com/koralkulacoglu/smart-order-router/commit/6b078fa092adaf8727c0b6eef031e62469cd6177))
+
 ## [1.4.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.3.0...v1.4.0) (2025-11-25)
 
 
