@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.6.0...v1.7.0) (2025-11-26)
+
+
+### Features
+
+* implement live trading UI and update README ([1c9ff32](https://github.com/koralkulacoglu/smart-order-router/commit/1c9ff32e87c8820df3a151f1e4d02f5446aa3dba))
+
 ## [1.6.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.5.0...v1.6.0) (2025-11-26)
 
 
