@@ -8,58 +8,7 @@ This application simulates an **arbitrage trading engine** that aggregates live 
 
 The system operates as a continuous high-frequency trading simulation:
 
-```mermaid
-graph TD
-    %% Styling - High Contrast
-    classDef api fill:#ffcc80,stroke:#ef6c00,stroke-width:2px,color:#000;
-    classDef internal fill:#90caf9,stroke:#1565c0,stroke-width:2px,color:#000;
-    classDef storage fill:#ce93d8,stroke:#6a1b9a,stroke-width:2px,color:#000;
-    classDef logic fill:#a5d6a7,stroke:#2e7d32,stroke-width:2px,color:#000;
-    classDef exec fill:#ffab91,stroke:#d84315,stroke-width:2px,color:#000;
-
-    subgraph External [🌐 External Exchanges]
-        direction LR
-        Binance[Binance API]:::api
-        Coinbase[Coinbase API]:::api
-        Kraken[Kraken API]:::api
-    end
-
-    subgraph SOR_Engine [⚙️ Smart Order Router]
-
-        subgraph Ingestion [Data Ingestion]
-            F1(Fetcher Worker 1):::internal
-            F2(Fetcher Worker 2):::internal
-            F3(Fetcher Worker 3):::internal
-        end
-
-        subgraph Aggregator [🧠 Memory Model]
-            GOB[("Global Order Book<br/>(Mutex Guarded)")]:::storage
-            Bids{"Max-Heap<br/>(Bids)"}:::storage
-            Asks{"Min-Heap<br/>(Asks)"}:::storage
-        end
-
-        subgraph Execution [⚡ Trade Execution]
-            Matcher((Matcher Engine)):::logic
-            Portfolio[Mock Portfolio]:::exec
-        end
-    end
-
-    %% Connections
-    Binance -->|Fetch| F1
-    Coinbase -->|Fetch| F2
-    Kraken -->|Fetch| F3
-
-    F1 -->|Push| GOB
-    F2 -->|Push| GOB
-    F3 -->|Push| GOB
-
-    GOB --- Bids
-    GOB --- Asks
-    GOB -->|Pop Best Orders| Matcher
-
-    Matcher -->|Execute Trade| Portfolio
-    Matcher -.->|Push Partial Fills| GOB
-```
+![alt text](<How It Works.png>)
 
 ### Data Ingestion
 
