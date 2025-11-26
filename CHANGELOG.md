@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.5.0...v1.6.0) (2025-11-26)
+
+
+### Features
+
+* create a portfolio model ([5794511](https://github.com/koralkulacoglu/smart-order-router/commit/579451153f4fdbbca3895bb936c8107efe793409))
+
 ## [1.5.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.4.0...v1.5.0) (2025-11-26)
 
 
