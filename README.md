@@ -24,21 +24,21 @@ graph TD
         Kraken[Kraken API]:::api
     end
 
-    subgraph App [⚙️ Smart Order Router]
+    subgraph SOR_Engine [⚙️ Smart Order Router]
 
-        subgraph Producers [Data Ingestion]
+        subgraph Ingestion [Data Ingestion]
             F1(Fetcher Worker 1):::internal
             F2(Fetcher Worker 2):::internal
             F3(Fetcher Worker 3):::internal
         end
 
-        subgraph Store [🧠 Memory Model]
+        subgraph Aggregator [🧠 Memory Model]
             GOB[("Global Order Book<br/>(Mutex Guarded)")]:::storage
             Bids{"Max-Heap<br/>(Bids)"}:::storage
             Asks{"Min-Heap<br/>(Asks)"}:::storage
         end
 
-        subgraph Consumer [⚡ Execution]
+        subgraph Execution [⚡ Trade Execution]
             Matcher((Matcher Engine)):::logic
             Portfolio[Mock Portfolio]:::exec
         end
@@ -55,10 +55,10 @@ graph TD
 
     GOB --- Bids
     GOB --- Asks
-    GOB -->|2. Pop Best Orders| Matcher
+    GOB -->|Pop Best Orders| Matcher
 
-    Matcher -->|3. Execute Trade| Portfolio
-    Matcher -.->|4. Push Partial Fills| GOB
+    Matcher -->|Execute Trade| Portfolio
+    Matcher -.->|Push Partial Fills| GOB
 ```
 
 ### Data Ingestion
