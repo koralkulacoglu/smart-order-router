@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/koralkulacoglu/smart-order-router/internal/engine"
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
 	"github.com/koralkulacoglu/smart-order-router/internal/models/exchanges"
+	"github.com/koralkulacoglu/smart-order-router/internal/ui"
 )
 
 type Job struct {
@@ -18,7 +18,7 @@ type Job struct {
 
 func main() {
 	portfolio := models.NewPortfolio(config.StartBankroll, config.FeeRate)
-
+	dash := ui.NewDashboard(portfolio)
 	gob := models.NewGlobalOrderBook()
 
 	jobs := []Job{
@@ -27,18 +27,23 @@ func main() {
 		{&exchanges.Kraken{}, "XBTUSD"},
 	}
 
-	var wg sync.WaitGroup
-	stopMatcher := make(chan bool)
+	stopChan := make(chan bool)
 
-	go engine.RunMatcher(gob, portfolio, stopMatcher)
+	go dash.Run(stopChan)
+	go engine.RunMatcher(gob, portfolio, dash, stopChan)
 
-	fmt.Println("--- Starting Fetchers ---")
-	for i, job := range jobs {
-		wg.Add(1)
-		go engine.FetchOrderBook(i+1, job.Exchange, job.Symbol, gob, &wg)
+	fetchTicker := time.NewTicker(config.FetchInterval)
+	defer fetchTicker.Stop()
+
+	dash.Log("System initialized. Starting fetch loop...")
+
+	for range fetchTicker.C {
+		var wg sync.WaitGroup
+		for i, job := range jobs {
+			wg.Add(1)
+			go engine.FetchOrderBook(i+1, job.Exchange, job.Symbol, gob, dash, &wg)
+		}
+		wg.Wait()
+		dash.Log("tick: market data updated")
 	}
-
-	wg.Wait()
-	time.Sleep(2 * time.Second)
-	stopMatcher <- true
 }

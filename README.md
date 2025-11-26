@@ -4,6 +4,8 @@ A concurrent Smart Order Router (SOR) written in Go.
 
 This application simulates an **arbitrage trading engine** that aggregates live order book data from multiple exchanges (Binance, Coinbase, Kraken) in parallel into a centralized "Global Order Book" to identify and execute profitable spread opportunities in real-time.
 
+<video src="Screen Recording 2025-11-26 002828.mp4" title="Title" autoplay muted loop></video>
+
 ## How It Works
 
 The system operates as a continuous high-frequency trading simulation:
@@ -42,20 +44,6 @@ The Matcher Engine runs in a continuous loop separate from the fetchers.
 git clone https://github.com/koralkulacoglu/smart-order-router.git
 cd smart-order-router
 go run cmd/main.go
-```
-
-You should see something like this:
-
-```
---- Starting Fetchers ---
---- Matcher Engine Started ---
-💵 Bankroll: $1000000.00
-[Fetcher #1] Coinbase fetched 5 bids, 5 asks in 126.335381ms
-[Fetcher #3] Kraken fetched 5 bids, 5 asks in 162.896275ms
->>> 🚀 EXECUTE: Buy 0.0000 on Coinbase @ 86921.70 -> Sell on Kraken @ 86941.60 | Profit: $0.0000
-[Fetcher #2] Binance fetched 5 bids, 5 asks in 186.816361ms
->>> 🚀 EXECUTE: Buy 0.0000 on Coinbase @ 86925.99 -> Sell on Binance @ 86962.03 | Profit: $0.0003
->>> 🚀 EXECUTE: Buy 0.0134 on Coinbase @ 86926.00 -> Sell on Binance @ 86962.03 | Profit: $0.2498
 ```
 
 ### Starting Configurations

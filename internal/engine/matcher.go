@@ -8,11 +8,11 @@ import (
 
 	"github.com/koralkulacoglu/smart-order-router/internal/config"
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
+	"github.com/koralkulacoglu/smart-order-router/internal/ui"
 )
 
-func RunMatcher(gob *models.GlobalOrderBook, portfolio *models.Portfolio, stopChan <-chan bool) {
-	fmt.Println("--- Matcher Engine Started ---")
-	fmt.Println(portfolio.GetStatus())
+func RunMatcher(gob *models.GlobalOrderBook, portfolio *models.Portfolio, dash *ui.Dashboard, stopChan <-chan bool) {
+	dash.Log("Matcher Engine Started...")
 
 	ticker := time.NewTicker(10 * time.Millisecond)
 	defer ticker.Stop()
@@ -55,7 +55,7 @@ func RunMatcher(gob *models.GlobalOrderBook, portfolio *models.Portfolio, stopCh
 				profit, executed := portfolio.ExecuteTrade(askOrder.Price, bidOrder.Price, quantity)
 
 				if executed {
-					fmt.Printf(">>> 🚀 EXECUTE: Buy %.4f on %s @ %.2f -> Sell on %s @ %.2f | Profit: $%.4f\n",
+					dash.Log("🚀 EXECUTE: Buy %.4f %s ($%.2f) -> Sell %s ($%.2f) | Profit: +$%.4f",
 						quantity, askOrder.Exchange, askOrder.Price, bidOrder.Exchange, bidOrder.Price, profit)
 
 					bidOrder.Quantity -= quantity
