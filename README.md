@@ -10,11 +10,11 @@ The system operates as a continuous high-frequency trading simulation:
 
 ```mermaid
 graph TD
-    %% Styling
-    classDef api fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef internal fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
-    classDef storage fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-    classDef logic fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    %% Styling - High Contrast
+    classDef api fill:#ffcc80,stroke:#ef6c00,stroke-width:2px,color:#000;
+    classDef internal fill:#90caf9,stroke:#1565c0,stroke-width:2px,color:#000;
+    classDef storage fill:#ce93d8,stroke:#6a1b9a,stroke-width:2px,color:#000;
+    classDef logic fill:#a5d6a7,stroke:#2e7d32,stroke-width:2px,color:#000;
 
     subgraph External [🌐 External Exchanges]
         direction LR
@@ -33,8 +33,8 @@ graph TD
 
         subgraph Store [🧠 Memory Model]
             GOB[("Global Order Book<br/>(Mutex Guarded)")]:::storage
-            Bids{Max-Heap<br/>Best Buys}:::storage
-            Asks{Min-Heap<br/>Cheapest Sells}:::storage
+            Bids{Max-Heap<br/>Bids}:::storage
+            Asks{Min-Heap<br/>Asks}:::storage
         end
 
         subgraph Consumer [⚡ Execution]
@@ -43,9 +43,9 @@ graph TD
     end
 
     %% Connections
-    Binance -->|JSON Depth| F1
-    Coinbase -->|JSON Depth| F2
-    Kraken -->|JSON Depth| F3
+    Binance -->|Fetch Orders| F1
+    Coinbase -->|Fetch Orders| F2
+    Kraken -->|Fetch Orders| F3
 
     F1 -->|Push Orders| GOB
     F2 -->|Push Orders| GOB
