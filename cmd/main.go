@@ -7,86 +7,35 @@ import (
 
 	"github.com/koralkulacoglu/smart-order-router/internal/engine"
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
+	"github.com/koralkulacoglu/smart-order-router/internal/models/exchanges"
 )
 
 type Job struct {
-	Exchange models.Exchange
+	Exchange exchanges.Exchange
 	Symbol   string
 }
 
 func main() {
+	gob := models.NewGlobalOrderBook()
+
 	jobs := []Job{
-		{&models.Coinbase{}, "BTC-USD"},
-		{&models.Binance{}, "BTCUSDT"},
-		{&models.Kraken{}, "XBTUSD"},
+		{&exchanges.Coinbase{}, "BTC-USD"},
+		{&exchanges.Binance{}, "BTCUSDT"},
+		{&exchanges.Kraken{}, "XBTUSD"},
 	}
-
-	const maxConcurrentWorkers = 4
-
-	workQueue := make(chan Job, len(jobs))
-	quoteStream := make(chan models.Quote, len(jobs))
 
 	var wg sync.WaitGroup
+	stopMatcher := make(chan bool)
 
-	for i := 1; i <= maxConcurrentWorkers; i++ {
+	go engine.RunMatcher(gob, stopMatcher)
+
+	fmt.Println("--- Starting Fetchers ---")
+	for i, job := range jobs {
 		wg.Add(1)
-		go func(workerId int) {
-			defer wg.Done()
-			for job := range workQueue {
-				fetchInnerWg := &sync.WaitGroup{}
-				fetchInnerWg.Add(1)
-				engine.FetchQuote(workerId, job.Exchange, job.Symbol, quoteStream, fetchInnerWg)
-				fetchInnerWg.Wait()
-			}
-		}(i)
+		go engine.FetchOrderBook(i+1, job.Exchange, job.Symbol, gob, &wg)
 	}
 
-	systemStart := time.Now()
-
-	for _, job := range jobs {
-		workQueue <- job
-	}
-
-	close(workQueue)
-
-	go func() {
-		wg.Wait()
-		close(quoteStream)
-	}()
-
-	fmt.Println()
-	fmt.Println("------------------------------------------------------------------------")
-	fmt.Printf("%-12s | %-10s | %-15s | %-12s\n", "EXCHANGE", "SYMBOL", "PRICE", "LATENCY")
-	fmt.Println("------------------------------------------------------------------------")
-
-	validQuotes := 0
-	var bestQuote models.Quote
-	for quote := range quoteStream {
-		if quote.Error != nil {
-			fmt.Printf("%-12s | %-10s | %-15s | %-12s\n",
-				quote.Exchange, quote.Symbol, "FAILED", quote.Latency)
-			continue
-		}
-
-		fmt.Printf("%-12s | %-10s | $%-14.2f | %-12s\n",
-			quote.Exchange, quote.Symbol, quote.Price, quote.Latency)
-
-		if validQuotes == 0 || quote.Price < bestQuote.Price {
-			bestQuote = quote
-		}
-		validQuotes++
-	}
-
-	systemLatency := time.Since(systemStart)
-
-	fmt.Println("------------------------------------------------------------------------")
-	fmt.Println()
-
-	if validQuotes > 0 {
-		fmt.Printf("BEST OFFER:   	%s on %s\n", bestQuote.Symbol, bestQuote.Exchange)
-		fmt.Printf("PRICE:          $%.2f\n", bestQuote.Price)
-		fmt.Printf("SYSTEM LATENCY: %v\n", systemLatency)
-	} else {
-		fmt.Println("No valid quotes found.")
-	}
+	wg.Wait()
+	time.Sleep(2 * time.Second)
+	stopMatcher <- true
 }
