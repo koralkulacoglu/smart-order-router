@@ -87,7 +87,7 @@ The Matcher Engine runs in a continuous loop separate from the fetchers.
 
 ## Local Setup
 
-[Install Go](https://go.dev/doc/install) before doing this:
+[Install Go](https://go.dev/doc/install) before running these commands:
 
 ```bash
 git clone https://github.com/koralkulacoglu/smart-order-router.git
@@ -95,18 +95,20 @@ cd smart-order-router
 go run cmd/main.go
 ```
 
-It should output something like this:
+You should see something like this:
 
 ```
 --- Starting Fetchers ---
 --- Matcher Engine Started ---
---- Starting Fetchers ---
---- Matcher Engine Started ---
-[Fetcher #1] Coinbase fetched 5 bids, 5 asks in 120.566843ms
-[Fetcher #3] Kraken fetched 5 bids, 5 asks in 154.220826ms
->>> EXECUTE: Buy 0.1498 on Coinbase @ 87404.00 -> Sell on Kraken @ 87408.30 | Profit: $0.6440
->>> EXECUTE: Buy 0.0243 on Coinbase @ 87404.02 -> Sell on Kraken @ 87408.30 | Profit: $0.1039
-[Fetcher #2] Binance fetched 5 bids, 5 asks in 196.260413ms
->>> EXECUTE: Buy 0.0011 on Coinbase @ 87405.55 -> Sell on Binance @ 87447.66 | Profit: $0.0482
->>> EXECUTE: Buy 0.2610 on Kraken @ 87408.40 -> Sell on Binance @ 87447.66 | Profit: $10.2469
+💵 Bankroll: $1000000.00
+[Fetcher #1] Coinbase fetched 5 bids, 5 asks in 126.335381ms
+[Fetcher #3] Kraken fetched 5 bids, 5 asks in 162.896275ms
+>>> 🚀 EXECUTE: Buy 0.0000 on Coinbase @ 86921.70 -> Sell on Kraken @ 86941.60 | Profit: $0.0000
+[Fetcher #2] Binance fetched 5 bids, 5 asks in 186.816361ms
+>>> 🚀 EXECUTE: Buy 0.0000 on Coinbase @ 86925.99 -> Sell on Binance @ 86962.03 | Profit: $0.0003
+>>> 🚀 EXECUTE: Buy 0.0134 on Coinbase @ 86926.00 -> Sell on Binance @ 86962.03 | Profit: $0.2498
 ```
+
+### Starting Configurations
+
+You can modify configs such as starting balance and fee rate in the `internal/config/config.go` file.

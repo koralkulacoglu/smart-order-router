@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/koralkulacoglu/smart-order-router/internal/config"
 	"github.com/koralkulacoglu/smart-order-router/internal/engine"
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
 	"github.com/koralkulacoglu/smart-order-router/internal/models/exchanges"
@@ -16,7 +17,7 @@ type Job struct {
 }
 
 func main() {
-	portfolio := models.NewPortfolio(1_000_000, 0.0001) // 0.01% fees
+	portfolio := models.NewPortfolio(config.StartBankroll, config.FeeRate)
 
 	gob := models.NewGlobalOrderBook()
 

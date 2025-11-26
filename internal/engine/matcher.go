@@ -6,6 +6,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/koralkulacoglu/smart-order-router/internal/config"
 	"github.com/koralkulacoglu/smart-order-router/internal/models"
 )
 
@@ -61,10 +62,10 @@ func RunMatcher(gob *models.GlobalOrderBook, portfolio *models.Portfolio, stopCh
 					askOrder.Quantity -= quantity
 				}
 
-				if bidOrder.Quantity > 0.0000001 {
+				if bidOrder.Quantity > config.MinOrderQuantity {
 					heap.Push(gob.Bids, bidOrder)
 				}
-				if askOrder.Quantity > 0.0000001 {
+				if askOrder.Quantity > config.MinOrderQuantity {
 					heap.Push(gob.Asks, askOrder)
 				}
 			}
