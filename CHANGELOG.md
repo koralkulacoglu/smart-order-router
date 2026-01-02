@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.7.0...v1.8.0) (2026-01-02)
+
+
+### Features
+
+* benchmark orderbooks ([c6548eb](https://github.com/koralkulacoglu/smart-order-router/commit/c6548eb0328f7031ed2f39d183e692d3516a4e13))
+
 ## [1.7.0](https://github.com/koralkulacoglu/smart-order-router/compare/v1.6.0...v1.7.0) (2025-11-26)
 
 
